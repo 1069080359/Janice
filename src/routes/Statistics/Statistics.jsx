@@ -269,11 +269,11 @@ class Statistics extends React.Component {
           hasLoveYou && <Affix style={{ position: 'absolute', top: 120, right: 0 }}>
             <ul className={styles.ul}>
               <li>
-                <a href="https://1069080359.github.io/Christmas-confession" target="_blank" >圣诞节快乐</a>
+                <a href="https://1069080359.github.io/Christmas-confession" target="_blank" rel="noopener noreferrer">圣诞节快乐</a>
               </li>
               {this.renderLine()}
               <li>
-                <a href="https://1069080359.github.io/I-LOVE-YOU" target="_blank" >I LOVE YOU</a>
+                <a href="https://1069080359.github.io/I-LOVE-YOU" target="_blank" rel="noopener noreferrer">I LOVE YOU</a>
               </li>
             </ul>
           </Affix>
