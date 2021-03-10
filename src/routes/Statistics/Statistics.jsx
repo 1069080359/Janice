@@ -1,6 +1,8 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
-import { ConfigProvider, message, Table } from 'antd';
+import { ConfigProvider, message, Table, Input, Button, Space } from 'antd';
+import Highlighter from 'react-highlight-words';
+import { SearchOutlined } from '@ant-design/icons';
 import zhCN from 'antd/es/locale/zh_CN';
 import styles from './Statistics.css';
 
@@ -13,12 +15,15 @@ class Statistics extends React.Component {
       bfExcelData: [],
       afExcelData: [],
       filesInfo: {},
+      searchText: '',
+      searchedColumn: '',
       columns: [
         {
           title: '型号',
           dataIndex: 'model',
           key: 'model',
-          align: 'center'
+          align: 'center',
+          ...this.getColumnSearchProps('model')
         },
         {
           title: '数量',
@@ -106,7 +111,7 @@ class Statistics extends React.Component {
     }, [])
     // 数据的筛选
     const list2 = list.reduce((obj, item) => {
-      let find = obj.find(i => (i.model === item.model) && !item.number)
+      let find = obj.find(i => item.number && (i.model === item.model))
       let _d = {
         ...item,
         frequency: 1
@@ -126,6 +131,73 @@ class Statistics extends React.Component {
       message.success('文件上传解析成功');
     })
   }
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder='按下回车键即可搜索型号'
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            搜索
+          </Button>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            重制
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : '',
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select(), 100);
+      }
+    },
+    render: text =>
+      this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[this.state.searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
+
 
   renderTableHeader = () => {
     const {

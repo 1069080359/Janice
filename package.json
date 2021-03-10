@@ -12,6 +12,7 @@
     "dva": "^2.4.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-highlight-words": "^0.17.0",
     "xlsx": "^0.16.9"
   },
   "devDependencies": {
