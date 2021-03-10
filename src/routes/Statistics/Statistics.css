@@ -3,4 +3,88 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  padding: 50px 0;
+}
+.statisticsTitle {
+  /* width: 8em; */
+  margin: auto;
+  white-space: nowrap;
+  animation: textIn 1s both;
+}
+@keyframes textIn {
+  0% {
+    opacity: 0;
+    letter-spacing: -200px;
+  }
+  60% {
+    letter-spacing: 5px;
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: 0;
+  }
+}
+.uploadBox{
+  width: 300px;
+  position: relative;
+  border: 3px dashed #ccc;
+  margin-top: 20px;
+}
+.uploadFont{
+  width: 100%;
+  height: 100%;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.uploadInput{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.add {
+  display: inline-block;
+  width: 76px; height: 76px;
+  color: #ccc;
+  border: 2px dashed;
+  border-top: none;
+  text-indent: -12em;
+  transition: color .25s;
+  position: relative;
+  overflow: hidden;
+}
+.add:hover {
+  color: #34538b;
+}
+.add::before, .add::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.add::before {
+  width: 20px;
+  border-top: 4px solid;
+  margin: -2px 0 0 -10px;
+}
+.add::after {
+  height: 20px;
+  border-left: 4px solid;
+  margin: -10px 0 0 -2px;
+}
+table{
+  min-width: 800px;
+}
+.tableHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tableHeader > p{
+ margin: 0;
 }

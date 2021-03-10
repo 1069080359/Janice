@@ -1,6 +1,7 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
-import { message } from 'antd';
+import { ConfigProvider, message, Table } from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
 import styles from './Statistics.css';
 
 class Statistics extends React.Component {
@@ -8,9 +9,37 @@ class Statistics extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       bfExcelData: [],
       afExcelData: [],
-      filesInfo: {}
+      filesInfo: {},
+      columns: [
+        {
+          title: '型号',
+          dataIndex: 'model',
+          key: 'model',
+          align: 'center'
+        },
+        {
+          title: '数量',
+          dataIndex: 'number',
+          key: 'number',
+          align: 'center',
+          sorter: (a, b) => a.number - b.number,
+        },
+        {
+          title: '品牌',
+          dataIndex: 'brand',
+          key: 'brand',
+          align: 'center'
+        },
+        {
+          title: '单价',
+          dataIndex: 'price',
+          key: 'price',
+          align: 'center'
+        },
+      ]
     };
   }
 
@@ -27,7 +56,8 @@ class Statistics extends React.Component {
     // 获取上传的文件对象
     const { files } = file.target;
     this.setState({
-      filesInfo: files[0]
+      filesInfo: files[0],
+      loading: true
     })
     // 通过FileReader对象读取文件
     const fileReader = new FileReader();
@@ -49,6 +79,7 @@ class Statistics extends React.Component {
       } catch (e) {
         // 这里可以抛出文件类型错误不正确的相关提示
         message.warning('文件类型不正确');
+        this.setState({ loading: false });
         return;
       }
     };
@@ -67,7 +98,7 @@ class Statistics extends React.Component {
       let obj = {
         price: item["单价"],
         brand: item['品牌'],
-        model: item['型号'],
+        model: this.trim(String(item['型号'])),
         number: item['数量']
       }
       arr.push(obj)
@@ -75,42 +106,79 @@ class Statistics extends React.Component {
     }, [])
     // 数据的筛选
     const list2 = list.reduce((obj, item) => {
-      let find = obj.find(i => this.trim(i.model) === this.trim(item.model))
+      let find = obj.find(i => (i.model === item.model) && !item.number)
       let _d = {
         ...item,
         frequency: 1
       }
+      if (!item.number) {
+        _d.number = 0
+      }
       // eslint-disable-next-line no-unused-expressions
-      find ? (find.number += item.number,find.price += item.price, find.frequency++) : obj.push(_d)
+      find ? (find.number += item.number, find.frequency++) : obj.push(_d)
       return obj
     }, [])
     this.setState({
       bfExcelData: list,
-      afExcelData: list2
+      afExcelData: list2,
+      loading: false
+    }, () => {
+      message.success('文件上传解析成功');
     })
+  }
+
+  renderTableHeader = () => {
+    const {
+      bfExcelData,
+      afExcelData,
+      filesInfo
+    } = this.state
+    return (
+      <div className={styles.tableHeader}>
+        <p>
+          数据总数：{bfExcelData.length} 条
+        </p>
+        <p>
+          汇总后数据总数：{afExcelData.length} 条
+        </p>
+        <p>
+          文件名称：{filesInfo.name}
+        </p>
+        <p>
+          文件大小：{this.formatBytes(filesInfo.size)}
+        </p>
+      </div>
+    )
   }
 
   render() {
     const {
-      bfExcelData,
       afExcelData,
-      filesInfo,
+      columns,
+      loading
     } = this.state
     return (
       <div className={styles.statistics}>
-        <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} />
-        <div>
-          数据总数：{bfExcelData.length} 条
+        <h1 className={styles.statisticsTitle}>表格汇总工具</h1>
+        <div className={styles.uploadBox}>
+          <div className={styles.uploadFont}>
+            <p className={styles.add}> </p>
+            <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
+            <p className={styles.uploadHint}>暂时只支持单次上传</p>
+          </div>
+          <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
         </div>
-        <div>
-          整合之后数据总数：{afExcelData.length} 条
-        </div>
-        <div>
-          文件名称：{filesInfo.name}
-        </div>
-        <div>
-          文件大小：{this.formatBytes(filesInfo.size)}
-        </div>
+        <ConfigProvider locale={zhCN}>
+          <Table
+            columns={columns}
+            dataSource={afExcelData}
+            bordered
+            title={afExcelData.length !== 0 && this.renderTableHeader}
+            loading={loading}
+            size="middle"
+          // footer={() => 'Footer'}
+          />
+        </ConfigProvider>
       </div>
     )
   }
