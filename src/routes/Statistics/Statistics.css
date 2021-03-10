@@ -27,7 +27,7 @@
 .uploadBox{
   width: 300px;
   position: relative;
-  border: 3px dashed #ccc;
+  border: 3px dashed #1890ff;
   margin-top: 20px;
 }
 .uploadFont{
@@ -50,7 +50,7 @@
 .add {
   display: inline-block;
   width: 76px; height: 76px;
-  color: #ccc;
+  color: #1890ff;
   border: 2px dashed;
   border-top: none;
   text-indent: -12em;
@@ -78,7 +78,7 @@
   margin: -10px 0 0 -2px;
 }
 table{
-  min-width: 800px;
+  min-width: 1200px;
 }
 .tableHeader{
   display: flex;

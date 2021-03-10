@@ -1,5 +1,6 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
+import moment from 'moment';
 import {
   ConfigProvider,
   message,
@@ -237,16 +238,19 @@ class Statistics extends React.Component {
     return (
       <div className={styles.tableHeader}>
         <p>
-          数据总数：{bfExcelData.length} 条
+          上传数据总数：<span className={styles.numberColor}>{bfExcelData.length}</span> 条
         </p>
         <p>
-          汇总后数据总数：{afExcelData.length} 条
+          汇总后总数：<span className={styles.numberColor}>{afExcelData.length}</span> 条
         </p>
         <p>
-          文件名称：{filesInfo.name}
+          文件名称：<span className={styles.numberColor}>{filesInfo.name}</span>
         </p>
         <p>
-          文件大小：{this.formatBytes(filesInfo.size)}
+          文件大小：<span className={styles.numberColor}>{this.formatBytes(filesInfo.size)}</span>
+        </p>
+        <p>
+          文档最后修改时间：<span className={styles.numberColor}>{moment(filesInfo.lastModified).format('YYYY-MM-DD HH:mm:ss')}</span>
         </p>
       </div>
     )
@@ -261,7 +265,7 @@ class Statistics extends React.Component {
       loading,
       loveYou
     } = this.state
-    const hasLoveYou = loveYou === '赵雨' ||  loveYou === '曹泽颖'
+    const hasLoveYou = loveYou === '赵雨' || loveYou === '曹泽颖'
     return (
       <>
         {
@@ -279,7 +283,7 @@ class Statistics extends React.Component {
           </Affix>
         }
         <div className={styles.statistics}>
-          <h1 className={styles.statisticsTitle}>表格汇总工具</h1>
+          <h1 className={styles.statisticsTitle}>表格汇总工具 --- 颖儿专属</h1>
           <div className={styles.uploadBox}>
             <div className={styles.uploadFont}>
               <p className={styles.add}> </p>
