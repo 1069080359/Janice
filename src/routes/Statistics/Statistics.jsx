@@ -98,34 +98,30 @@ class Statistics extends React.Component {
   }
 
   statisticalCalculation = (data) => {
-    // 数据的整理
-    const list = data.reduce((arr, item) => {
+    // 数据的整理筛选
+    const list = data.reduce((listArr, item) => {
+      // 将列表数据的 key 替换
       let obj = {
         price: item["单价"],
         brand: item['品牌'],
         model: this.trim(String(item['型号'])),
-        number: item['数量']
-      }
-      arr.push(obj)
-      return arr
-    }, [])
-    // 数据的筛选
-    const list2 = list.reduce((obj, item) => {
-      let find = obj.find(i => item.number && (i.model === item.model))
-      let _d = {
-        ...item,
+        number: item['数量'],
         frequency: 1
       }
-      if (!item.number) {
-        _d.number = 0
+      // 判断 替换中的 数据中的 型号是否和 listArr 的型号是否有相同
+      let find = listArr.find(i => obj.number && (i.model === obj.model))
+      // 需要对替换的数据中的 数量 进行判断 如果是 undefined 则改为 0 否则会对排序有影响
+      if (!obj.number) {
+        obj.number = 0
       }
+      // 最后 如果有相同的则 相加 数量，如果没有相同的 则 push 到 listArr
       // eslint-disable-next-line no-unused-expressions
-      find ? (find.number += item.number, find.frequency++) : obj.push(_d)
-      return obj
+      find ? (find.number += obj.number, find.frequency++) : listArr.push(obj)
+      return listArr
     }, [])
     this.setState({
-      bfExcelData: list,
-      afExcelData: list2,
+      bfExcelData: data,
+      afExcelData: list,
       loading: false
     }, () => {
       message.success('文件上传解析成功');
