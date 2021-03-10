@@ -33,12 +33,7 @@ class Statistics extends React.Component {
           dataIndex: 'model',
           key: 'model',
           align: 'center',
-          ...this.getColumnSearchProps('model'),
-          render: (text, row, index) => {
-            return (
-              <span className={styles.numberColor}>{text}</span>
-            )
-          }
+          ...this.getColumnSearchProps('model')
         },
         {
           title: '数量',
