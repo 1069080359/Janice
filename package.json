@@ -5,7 +5,7 @@
     "build": "roadhog build",
     "lint": "eslint --ext .js src test",
     "precommit": "npm run lint",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "homepage": "./",
   "dependencies": {
