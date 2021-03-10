@@ -88,3 +88,27 @@ table{
 .tableHeader > p{
  margin: 0;
 }
+.frequencyColor{
+ color: red;
+ font-size: 18px;
+ font-weight: bold;
+}
+.numberColor{
+ color: #1890ff;
+ font-size: 18px;
+ font-weight: bold;
+}
+.ul{
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-right: none;
+}
+.line{
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+}

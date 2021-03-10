@@ -1,6 +1,14 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
-import { ConfigProvider, message, Table, Input, Button, Space } from 'antd';
+import {
+  ConfigProvider,
+  message,
+  Table,
+  Input,
+  Button,
+  Space,
+  Affix
+} from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import zhCN from 'antd/es/locale/zh_CN';
@@ -11,6 +19,7 @@ class Statistics extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loveYou: sessionStorage.getItem('loveYou'),
       loading: false,
       bfExcelData: [],
       afExcelData: [],
@@ -23,7 +32,12 @@ class Statistics extends React.Component {
           dataIndex: 'model',
           key: 'model',
           align: 'center',
-          ...this.getColumnSearchProps('model')
+          ...this.getColumnSearchProps('model'),
+          render: (text, row, index) => {
+            return (
+              <span className={styles.numberColor}>{text}</span>
+            )
+          }
         },
         {
           title: '数量',
@@ -31,6 +45,11 @@ class Statistics extends React.Component {
           key: 'number',
           align: 'center',
           sorter: (a, b) => a.number - b.number,
+          render: (num, row, index) => {
+            return (
+              <span className={styles.numberColor}>{num}</span>
+            )
+          }
         },
         {
           title: '品牌',
@@ -43,6 +62,20 @@ class Statistics extends React.Component {
           dataIndex: 'price',
           key: 'price',
           align: 'center'
+        },
+        {
+          title: '重复次数',
+          dataIndex: 'frequency',
+          key: 'frequency',
+          align: 'center',
+          sorter: (a, b) => a.frequency - b.frequency,
+          render: (num, row, index) => {
+            return (
+              <>
+                <span className={styles.frequencyColor}>{num} </span>次
+              </>
+            )
+          }
         },
       ]
     };
@@ -219,35 +252,55 @@ class Statistics extends React.Component {
     )
   }
 
+  renderLine = () => <div className={styles.line} />
+
   render() {
     const {
       afExcelData,
       columns,
-      loading
+      loading,
+      loveYou
     } = this.state
+    const hasLoveYou = loveYou === '赵雨' ||  loveYou === '曹泽颖'
     return (
-      <div className={styles.statistics}>
-        <h1 className={styles.statisticsTitle}>表格汇总工具</h1>
-        <div className={styles.uploadBox}>
-          <div className={styles.uploadFont}>
-            <p className={styles.add}> </p>
-            <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
-            <p className={styles.uploadHint}>暂时只支持单次上传</p>
+      <>
+        {
+          // 彩蛋
+          hasLoveYou && <Affix style={{ position: 'absolute', top: 120, right: 0 }}>
+            <ul className={styles.ul}>
+              <li>
+                <a href="https://1069080359.github.io/Christmas-confession" target="_blank" >圣诞节快乐</a>
+              </li>
+              {this.renderLine()}
+              <li>
+                <a href="https://1069080359.github.io/I-LOVE-YOU" target="_blank" >I LOVE YOU</a>
+              </li>
+            </ul>
+          </Affix>
+        }
+        <div className={styles.statistics}>
+          <h1 className={styles.statisticsTitle}>表格汇总工具</h1>
+          <div className={styles.uploadBox}>
+            <div className={styles.uploadFont}>
+              <p className={styles.add}> </p>
+              <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
+              <p className={styles.uploadHint}>暂时只支持单次上传</p>
+            </div>
+            <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
           </div>
-          <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
+          <ConfigProvider locale={zhCN}>
+            <Table
+              columns={columns}
+              dataSource={afExcelData}
+              bordered
+              title={afExcelData.length !== 0 && this.renderTableHeader}
+              loading={loading}
+              size="middle"
+            // footer={() => 'Footer'}
+            />
+          </ConfigProvider>
         </div>
-        <ConfigProvider locale={zhCN}>
-          <Table
-            columns={columns}
-            dataSource={afExcelData}
-            bordered
-            title={afExcelData.length !== 0 && this.renderTableHeader}
-            loading={loading}
-            size="middle"
-          // footer={() => 'Footer'}
-          />
-        </ConfigProvider>
-      </div>
+      </>
     )
   }
 
