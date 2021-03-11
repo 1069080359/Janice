@@ -1,5 +1,6 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
+import ExportJsonExcel from 'js-export-excel';
 import moment from 'moment';
 import {
   ConfigProvider,
@@ -170,6 +171,41 @@ class Statistics extends React.Component {
     this.setState({ searchText: '' });
   };
 
+  downloadExcel = () => {
+    const { afExcelData, filesInfo } = this.state
+    if(afExcelData.length === 0) {
+      message.warning('上传 Excel表格 哟，宝贝～');
+      return false
+    }
+    const data = afExcelData ? afExcelData : '';//表格数据
+    let option = {};
+    let dataTable = [];
+    if (data) {
+      for (let i in data) {
+        if (data) {
+          let obj = {
+            '型号': data[i].model,
+            '数量': data[i].number,
+          }
+          dataTable.push(obj);
+        }
+      }
+    }
+
+    option.fileName = `整理后 - ${filesInfo.name.split('.')[0]}`
+    option.datas = [
+      {
+        sheetData: dataTable,
+        sheetName: 'sheet',
+        sheetFilter: ['型号', '数量'],
+        sheetHeader: ['型号', '数量'],
+      }
+    ];
+
+    let toExcel = new ExportJsonExcel(option);
+    toExcel.saveExcel();
+  }
+
   getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
@@ -287,6 +323,7 @@ class Statistics extends React.Component {
             </div>
             <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
           </div>
+          <Button onClick={this.downloadExcel}>导出 Excel 表格</Button>
           <ConfigProvider locale={zhCN}>
             <Table
               columns={columns}
