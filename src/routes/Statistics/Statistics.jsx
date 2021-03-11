@@ -173,23 +173,21 @@ class Statistics extends React.Component {
 
   downloadExcel = () => {
     const { afExcelData, filesInfo } = this.state
-    if(afExcelData.length === 0) {
+    if (afExcelData.length === 0) {
       message.warning('上传 Excel表格 哟，宝贝～');
       return false
     }
-    const data = afExcelData ? afExcelData : '';//表格数据
     let option = {};
     let dataTable = [];
-    if (data) {
-      for (let i in data) {
-        if (data) {
-          let obj = {
-            '型号': data[i].model,
-            '数量': data[i].number,
-          }
-          dataTable.push(obj);
-        }
+    for (let i in afExcelData) {
+      let obj = {
+        '型号': afExcelData[i].model,
+        '数量': afExcelData[i].number,
+        '品牌': afExcelData[i].brand,
+        '单价': afExcelData[i].price,
+        '重复次数': afExcelData[i].frequency,
       }
+      dataTable.push(obj);
     }
 
     option.fileName = `整理后 - ${filesInfo.name.split('.')[0]}`
@@ -197,8 +195,8 @@ class Statistics extends React.Component {
       {
         sheetData: dataTable,
         sheetName: 'sheet',
-        sheetFilter: ['型号', '数量'],
-        sheetHeader: ['型号', '数量'],
+        sheetFilter: ['型号', '数量', '品牌', '单价', '重复次数'],
+        sheetHeader: ['型号', '数量', '品牌', '单价', '重复次数'],
       }
     ];
 
