@@ -14,6 +14,10 @@ import {
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import zhCN from 'antd/es/locale/zh_CN';
+import {
+  formatBytes,
+  trim
+} from '../../utils/encapsulationMethod.js';
 import styles from './Statistics.css';
 
 class Statistics extends React.Component {
@@ -28,6 +32,7 @@ class Statistics extends React.Component {
       filesInfo: {},
       searchText: '',
       searchedColumn: '',
+      sheetFilterHeader: ['型号', '数量', '品牌', '单价', '重复次数'],
       columns: [
         {
           title: '型号',
@@ -78,15 +83,7 @@ class Statistics extends React.Component {
     };
   }
 
-  formatBytes = (bytes, decimals) => {
-    if (bytes === 0) return '0 Bytes';
-    var k = 1024,
-      dm = decimals || 2,
-      sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-      i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  }
-
+  // excel 上传
   onImportExcel = file => {
     // 获取上传的文件对象
     const { files } = file.target;
@@ -123,10 +120,7 @@ class Statistics extends React.Component {
     file.target.value = ""
   }
 
-  trim = (s) => {
-    return s.replace(/(^\s*)|(\s*$)/g, "");
-  }
-
+  // 对表格中的数据进行处理
   statisticalCalculation = (data) => {
     // 数据的整理筛选
     const list = data.reduce((listArr, item) => {
@@ -134,7 +128,7 @@ class Statistics extends React.Component {
       let obj = {
         price: item["单价"],
         brand: item['品牌'],
-        model: this.trim(String(item['型号'])),
+        model: trim(String(item['型号'])),
         number: item['数量'],
         frequency: 1
       }
@@ -158,21 +152,13 @@ class Statistics extends React.Component {
     })
   }
 
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
-  };
-
-  handleReset = clearFilters => {
-    clearFilters();
-    this.setState({ searchText: '' });
-  };
-
+  // 下载 excel ---> 全部数据
   downloadExcel = () => {
-    const { afExcelData, filesInfo } = this.state
+    const {
+      afExcelData,
+      filesInfo,
+      sheetFilterHeader
+    } = this.state
     if (afExcelData.length === 0) {
       message.warning('上传 Excel表格 哟，宝贝～');
       return false
@@ -180,12 +166,19 @@ class Statistics extends React.Component {
     let option = {};
     let dataTable = [];
     for (let i in afExcelData) {
+      const {
+        model,
+        number,
+        brand,
+        price,
+        frequency
+      } = afExcelData[i]
       let obj = {
-        '型号': afExcelData[i].model,
-        '数量': afExcelData[i].number,
-        '品牌': afExcelData[i].brand,
-        '单价': afExcelData[i].price,
-        '重复次数': afExcelData[i].frequency,
+        '型号': model,
+        '数量': number,
+        '品牌': brand,
+        '单价': price,
+        '重复次数': frequency,
       }
       dataTable.push(obj);
     }
@@ -195,8 +188,8 @@ class Statistics extends React.Component {
       {
         sheetData: dataTable,
         sheetName: 'sheet',
-        sheetFilter: ['型号', '数量', '品牌', '单价', '重复次数'],
-        sheetHeader: ['型号', '数量', '品牌', '单价', '重复次数'],
+        sheetFilter: sheetFilterHeader,
+        sheetHeader: sheetFilterHeader,
       }
     ];
 
@@ -204,6 +197,7 @@ class Statistics extends React.Component {
     toExcel.saveExcel();
   }
 
+  // table 筛选
   getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
@@ -256,7 +250,18 @@ class Statistics extends React.Component {
       ),
   });
 
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
 
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
 
   renderTableHeader = () => {
     const {
@@ -276,7 +281,7 @@ class Statistics extends React.Component {
           文件名称：<span className={styles.numberColor}>{filesInfo.name}</span>
         </p>
         <p>
-          文件大小：<span className={styles.numberColor}>{this.formatBytes(filesInfo.size)}</span>
+          文件大小：<span className={styles.numberColor}>{formatBytes(filesInfo.size)}</span>
         </p>
         <p>
           文档最后修改时间：<span className={styles.numberColor}>{moment(filesInfo.lastModified).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -287,52 +292,72 @@ class Statistics extends React.Component {
 
   renderLine = () => <div className={styles.line} />
 
-  render() {
+  // 彩蛋
+  renderColoredEggs = () => {
+    return (
+      <Affix style={{ position: 'absolute', top: 120, right: 0 }}>
+        <ul className={styles.ul}>
+          <li>
+            <a href="https://1069080359.github.io/Christmas-confession" target="_blank" rel="noopener noreferrer">圣诞节快乐</a>
+          </li>
+          {this.renderLine()}
+          <li>
+            <a href="https://1069080359.github.io/I-LOVE-YOU" target="_blank" rel="noopener noreferrer">I LOVE YOU</a>
+          </li>
+        </ul>
+      </Affix>
+    )
+  }
+
+  renderUpload = () => (
+    <div className={styles.uploadBox}>
+      <div className={styles.uploadFont}>
+        <p className={styles.add}> </p>
+        <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
+        <p className={styles.uploadHint}>暂时只支持单次上传</p>
+      </div>
+      <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
+    </div>
+  )
+
+  renderTable = () => {
     const {
       afExcelData,
       columns,
-      loading,
-      loveYou
+      loading
     } = this.state
+    return (
+      <ConfigProvider locale={zhCN}>
+        <Table
+          columns={columns}
+          dataSource={afExcelData}
+          bordered
+          title={afExcelData.length !== 0 && this.renderTableHeader}
+          loading={loading}
+          size="middle"
+          footer={() => '注意⚠️ Excel 表格内容有上传需求限制：型号, 数量, 品牌, 单价，不得包含其他类型，以及这四种名称不得改变'}
+        />
+      </ConfigProvider>
+    )
+  }
+
+  render() {
+    const { loveYou } = this.state
     const hasLoveYou = loveYou === '赵雨' || loveYou === '曹泽颖'
     return (
       <>
         {
-          // 彩蛋
-          hasLoveYou && <Affix style={{ position: 'absolute', top: 120, right: 0 }}>
-            <ul className={styles.ul}>
-              <li>
-                <a href="https://1069080359.github.io/Christmas-confession" target="_blank" rel="noopener noreferrer">圣诞节快乐</a>
-              </li>
-              {this.renderLine()}
-              <li>
-                <a href="https://1069080359.github.io/I-LOVE-YOU" target="_blank" rel="noopener noreferrer">I LOVE YOU</a>
-              </li>
-            </ul>
-          </Affix>
+          hasLoveYou && this.renderColoredEggs()
         }
         <div className={styles.statistics}>
           <h1 className={styles.statisticsTitle}>表格汇总工具 --- 颖儿专属</h1>
-          <div className={styles.uploadBox}>
-            <div className={styles.uploadFont}>
-              <p className={styles.add}> </p>
-              <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
-              <p className={styles.uploadHint}>暂时只支持单次上传</p>
-            </div>
-            <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
-          </div>
+          {
+            this.renderUpload()
+          }
           <Button onClick={this.downloadExcel}>导出 Excel 表格</Button>
-          <ConfigProvider locale={zhCN}>
-            <Table
-              columns={columns}
-              dataSource={afExcelData}
-              bordered
-              title={afExcelData.length !== 0 && this.renderTableHeader}
-              loading={loading}
-              size="middle"
-            // footer={() => 'Footer'}
-            />
-          </ConfigProvider>
+          {
+            this.renderTable()
+          }
         </div>
       </>
     )
