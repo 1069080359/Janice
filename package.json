@@ -17,6 +17,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-highlight-words": "^0.17.0",
+    "react-html-table-to-excel": "^2.0.0",
     "xlsx": "^0.16.9"
   },
   "devDependencies": {

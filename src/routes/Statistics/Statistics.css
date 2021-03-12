@@ -1,9 +1,9 @@
-.statistics{
+.statistics {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  padding: 50px 0;
+  padding: 20px 0;
 }
 .statisticsTitle {
   /* width: 8em; */
@@ -24,21 +24,21 @@
     letter-spacing: 0;
   }
 }
-.uploadBox{
+.uploadBox {
   width: 300px;
   position: relative;
   border: 3px dashed #1890ff;
   margin-top: 20px;
 }
-.uploadFont{
+.uploadFont {
   width: 100%;
   height: 100%;
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.uploadInput{
+.uploadInput {
   position: absolute;
   top: 0;
   left: 0;
@@ -49,20 +49,22 @@
 }
 .add {
   display: inline-block;
-  width: 76px; height: 76px;
+  width: 76px;
+  height: 76px;
   color: #1890ff;
   border: 2px dashed;
   border-top: none;
   text-indent: -12em;
-  transition: color .25s;
+  transition: color 0.25s;
   position: relative;
   overflow: hidden;
 }
 .add:hover {
   color: #34538b;
 }
-.add::before, .add::after {
-  content: '';
+.add::before,
+.add::after {
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -77,38 +79,51 @@
   border-left: 4px solid;
   margin: -10px 0 0 -2px;
 }
-table{
+table,.downloadExcelBox {
   min-width: 1200px;
 }
-.tableHeader{
+.downloadExcelBox{
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+.tableHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.tableHeader > p{
- margin: 0;
+.tableHeader > p {
+  margin: 0;
 }
-.frequencyColor{
- color: red;
- font-size: 18px;
- font-weight: bold;
+.frequencyColor {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
 }
-.numberColor{
- color: #1890ff;
- font-size: 18px;
- font-weight: bold;
+.numberColor {
+  color: #1890ff;
+  font-size: 18px;
+  font-weight: bold;
 }
-.ul{
+.ul {
   width: 100px;
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   flex-direction: column;
   border: 1px solid #ccc;
   border-right: none;
 }
-.line{
+.line {
   width: 100%;
   height: 1px;
   background-color: #ccc;
+}
+.fontTip{
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+}
+.downloadTableXlsButton{
+  border: none;
 }

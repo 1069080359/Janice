@@ -1,6 +1,7 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
 import ExportJsonExcel from 'js-export-excel';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import moment from 'moment';
 import {
   ConfigProvider,
@@ -9,7 +10,8 @@ import {
   Input,
   Button,
   Space,
-  Affix
+  Affix,
+  Tooltip
 } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
@@ -33,6 +35,7 @@ class Statistics extends React.Component {
       searchText: '',
       searchedColumn: '',
       sheetFilterHeader: ['型号', '数量', '品牌', '单价', '重复次数'],
+      sheetColumnWidths: ['10', '5', '10', '5', '5'],
       columns: [
         {
           title: '型号',
@@ -83,6 +86,11 @@ class Statistics extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const tableNode = document.getElementsByTagName('table')[0]
+    tableNode.setAttribute('id', 'table-to-xls')
+  }
+
   // excel 上传
   onImportExcel = file => {
     // 获取上传的文件对象
@@ -123,14 +131,15 @@ class Statistics extends React.Component {
   // 对表格中的数据进行处理
   statisticalCalculation = (data) => {
     // 数据的整理筛选
-    const list = data.reduce((listArr, item) => {
+    const list = data.reduce((listArr, item, index) => {
       // 将列表数据的 key 替换
       let obj = {
         price: item["单价"],
         brand: item['品牌'],
         model: trim(String(item['型号'])),
         number: item['数量'],
-        frequency: 1
+        frequency: 1,
+        key: index.toString()
       }
       // 判断 替换中的 数据中的 型号是否和 listArr 的型号是否有相同
       let find = listArr.find(i => obj.number && (i.model === obj.model))
@@ -152,12 +161,13 @@ class Statistics extends React.Component {
     })
   }
 
-  // 下载 excel ---> 全部数据
+  // 全部数据导出 Excel 表格
   downloadExcel = () => {
     const {
       afExcelData,
       filesInfo,
-      sheetFilterHeader
+      sheetFilterHeader,
+      sheetColumnWidths
     } = this.state
     if (afExcelData.length === 0) {
       message.warning('上传 Excel表格 哟，宝贝～');
@@ -190,6 +200,7 @@ class Statistics extends React.Component {
         sheetName: 'sheet',
         sheetFilter: sheetFilterHeader,
         sheetHeader: sheetFilterHeader,
+        columnWidths: sheetColumnWidths
       }
     ];
 
@@ -320,7 +331,7 @@ class Statistics extends React.Component {
     </div>
   )
 
-  renderTable = () => {
+  renderTable = _ => {
     const {
       afExcelData,
       columns,
@@ -341,6 +352,36 @@ class Statistics extends React.Component {
     )
   }
 
+  renderBtn = () => (
+    <Tooltip placement="topRight" title='支持排序、筛选后导出'>
+      <Button>
+        <span className={styles.fontTip}>当前页数据</span> 导出 Excel 表格
+      </Button>
+    </Tooltip>
+  )
+  renderDownloadExcel = () => {
+    const {
+      filesInfo
+    } = this.state
+    const fName = `整理后 - ${filesInfo?.name?.split('.')[0]}`
+    return (
+      <div className={styles.downloadExcelBox}>
+        <Tooltip placement="topLeft" title='不支持排序、筛选后导出'>
+          <Button onClick={this.downloadExcel}>
+            <span className={styles.fontTip}>全部数据</span> 导出 Excel 表格
+          </Button>
+        </Tooltip>
+        <ReactHTMLTableToExcel
+          id="test-table-xls-button"
+          className={styles.downloadTableXlsButton}
+          table="table-to-xls"
+          filename={fName}
+          sheet={filesInfo?.name}
+          buttonText={this.renderBtn()} />
+      </div>
+    )
+  }
+
   render() {
     const { loveYou } = this.state
     const hasLoveYou = loveYou === '赵雨' || loveYou === '曹泽颖'
@@ -354,7 +395,9 @@ class Statistics extends React.Component {
           {
             this.renderUpload()
           }
-          <Button onClick={this.downloadExcel}>导出 Excel 表格</Button>
+          {
+            this.renderDownloadExcel()
+          }
           {
             this.renderTable()
           }
