@@ -1,15 +1,19 @@
 .statistics {
+  height: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
   padding: 20px 0;
 }
 .statisticsTitle {
-  /* width: 8em; */
-  margin: auto;
+  width: auto;
+  margin: 0 auto;
   white-space: nowrap;
   animation: textIn 1s both;
+  background: linear-gradient(to right, yellow, cyan);
+  -webkit-background-clip: text;
+  color: transparent;
+  z-index: 1;
 }
 @keyframes textIn {
   0% {
@@ -27,8 +31,9 @@
 .uploadBox {
   width: 300px;
   position: relative;
-  border: 3px dashed #1890ff;
+  border: 1px dashed #1890ff;
   margin-top: 20px;
+  z-index: 1;
 }
 .uploadFont {
   width: 100%;
@@ -48,6 +53,7 @@
   cursor: pointer;
 }
 .add {
+  opacity: .6;
   display: inline-block;
   width: 76px;
   height: 76px;
@@ -58,6 +64,17 @@
   transition: color 0.25s;
   position: relative;
   overflow: hidden;
+  background: repeating-linear-gradient(
+    45deg,
+    #114abc,
+    #114abc 10px,
+    #fff 10px,
+    #fff 20px,
+    #bf2010 10px,
+    #bf2010 30px,
+    #fff 30px,
+    #fff 40px
+  );
 }
 .add:hover {
   color: #34538b;
@@ -79,10 +96,11 @@
   border-left: 4px solid;
   margin: -10px 0 0 -2px;
 }
-table,.downloadExcelBox {
+table,
+.downloadExcelBox {
   min-width: 1200px;
 }
-.downloadExcelBox{
+.downloadExcelBox {
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
@@ -119,11 +137,103 @@ table,.downloadExcelBox {
   height: 1px;
   background-color: #ccc;
 }
-.fontTip{
+.fontTip {
   color: #1890ff;
   font-size: 18px;
   font-weight: bold;
 }
-.downloadTableXlsButton{
+.downloadTableXlsButton {
   border: none;
 }
+/* 文字颜色渐变 */
+.uploadText,
+.uploadHint {
+  background: linear-gradient(to right, red, blue);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* 动态背景开始 */
+.trendsBgBox {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.trendsBgDiv {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.trendsBgDiv:nth-child(1) {
+  background: linear-gradient(
+    238deg,
+    rgb(130, 255, 0) 0%,
+    rgb(0, 84, 166) 100%
+  );
+  animation: move 12s infinite linear;
+}
+
+.trendsBgDiv:nth-child(2) {
+  background: linear-gradient(238deg, rgb(33, 200, 69) 0%, rgb(0, 0, 100) 100%);
+  mix-blend-mode: overlay;
+  animation: move 6s infinite linear;
+}
+
+.trendsBgDiv:nth-child(3) {
+  background: linear-gradient(
+    238deg,
+    rgb(200, 255, 255) 48%,
+    rgb(3, 0, 151) 100%
+  );
+  mix-blend-mode: multiply;
+  animation: move 6s infinite linear;
+}
+
+.trendsBgDiv:nth-child(4) {
+  background: radial-gradient(
+    100% 85% at 0% 100%,
+    rgb(0, 0, 0) 0%,
+    rgb(0, 131, 255) 50%,
+    rgb(255, 0, 0) 100%
+  );
+  mix-blend-mode: difference;
+  animation: move 6s infinite linear;
+}
+
+.trendsBgDiv:nth-child(5) {
+  background: radial-gradient(
+    100% 225% at 0% 100%,
+    rgb(255, 0, 0) 0%,
+    rgb(66, 255, 0) 100%
+  );
+  mix-blend-mode: difference;
+  animation: move 6s infinite linear;
+}
+
+.trendsBgDiv:nth-child(6) {
+  background: radial-gradient(
+    100% 140% at 100% 0%,
+    rgb(0, 134, 62) 0%,
+    rgb(0, 239, 255) 50%,
+    rgb(0, 113, 186) 100%
+  );
+  mix-blend-mode: overlay;
+  animation: move 6s infinite linear;
+}
+
+@keyframes move {
+  0% {
+    filter: unset;
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+/* 动态背景结束 */

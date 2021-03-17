@@ -18,7 +18,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import zhCN from 'antd/es/locale/zh_CN';
 import {
   formatBytes,
-  trim
+  trim,
+  chromeSpeak
 } from '../../utils/encapsulationMethod.js';
 import styles from './Statistics.css';
 
@@ -88,7 +89,8 @@ class Statistics extends React.Component {
 
   componentDidMount() {
     const tableNode = document.getElementsByTagName('table')[0]
-    tableNode.setAttribute('id', 'table-to-xls')
+    tableNode && tableNode.setAttribute('id', 'table-to-xls')
+    chromeSpeak('Welcome to 颖儿 exclusive table summary tool')
   }
 
   // excel 上传
@@ -157,6 +159,7 @@ class Statistics extends React.Component {
       afExcelData: list,
       loading: false
     }, () => {
+      chromeSpeak('i love you')
       message.success('文件上传解析成功');
     })
   }
@@ -321,14 +324,17 @@ class Statistics extends React.Component {
   }
 
   renderUpload = () => (
-    <div className={styles.uploadBox}>
-      <div className={styles.uploadFont}>
-        <p className={styles.add}> </p>
-        <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
-        <p className={styles.uploadHint}>暂时只支持单次上传</p>
+    <>
+      <h1 className={styles.statisticsTitle}>表格汇总工具 --- 颖儿专属</h1>
+      <div className={styles.uploadBox}>
+        <div className={styles.uploadFont}>
+          <p className={styles.add}> </p>
+          <p className={styles.uploadText}>单击或拖动文件到此区域以上传</p>
+          <p className={styles.uploadHint}>暂时只支持单次上传</p>
+        </div>
+        <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
       </div>
-      <input type='file' accept='.xlsx, .xls' onChange={this.onImportExcel} className={styles.uploadInput} />
-    </div>
+    </>
   )
 
   renderTable = _ => {
@@ -376,8 +382,24 @@ class Statistics extends React.Component {
           className={styles.downloadTableXlsButton}
           table="table-to-xls"
           filename={fName}
-          sheet={filesInfo?.name}
+          sheet={filesInfo?.name || ''}
           buttonText={this.renderBtn()} />
+      </div>
+    )
+  }
+
+  renderTrendsBg = () => {
+    return (
+      <div className={styles.trendsBgBox}>
+        {
+          this.renderUpload()
+        }
+        <div className={styles.trendsBgDiv}></div>
+        <div className={styles.trendsBgDiv}></div>
+        <div className={styles.trendsBgDiv}></div>
+        <div className={styles.trendsBgDiv}></div>
+        <div className={styles.trendsBgDiv}></div>
+        <div className={styles.trendsBgDiv}></div>
       </div>
     )
   }
@@ -391,9 +413,8 @@ class Statistics extends React.Component {
           hasLoveYou && this.renderColoredEggs()
         }
         <div className={styles.statistics}>
-          <h1 className={styles.statisticsTitle}>表格汇总工具 --- 颖儿专属</h1>
           {
-            this.renderUpload()
+            this.renderTrendsBg()
           }
           {
             this.renderDownloadExcel()

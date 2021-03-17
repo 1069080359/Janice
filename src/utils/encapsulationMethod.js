@@ -13,3 +13,10 @@ export const formatBytes = (bytes, decimals) => {
 export const trim = (s) => {
   return s.replace(/(^\s*)|(\s*$)/g, "");
 }
+
+
+export const chromeSpeak = (text) => {
+  // 让浏览器说我爱你
+  const speechInstance = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(speechInstance);
+}
