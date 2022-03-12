@@ -4,6 +4,7 @@
 /node_modules
 
 # production
+/yarn.lock
 # /dist
 
 # misc
