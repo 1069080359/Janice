@@ -90,7 +90,7 @@ class Statistics extends React.Component {
   componentDidMount() {
     const tableNode = document.getElementsByTagName('table')[0]
     tableNode && tableNode.setAttribute('id', 'table-to-xls')
-    chromeSpeak('Welcome to 颖儿 exclusive table summary tool')
+    chromeSpeak('Welcome to 欢欢老婆 exclusive table summary tool')
   }
 
   // excel 上传
@@ -325,7 +325,7 @@ class Statistics extends React.Component {
 
   renderUpload = () => (
     <>
-      <h1 className={styles.statisticsTitle}>表格汇总工具 --- 颖儿专属</h1>
+      <h1 className={styles.statisticsTitle}>表格汇总工具 --- 老婆专属</h1>
       <div className={styles.uploadBox}>
         <div className={styles.uploadFont}>
           <p className={styles.add}> </p>
