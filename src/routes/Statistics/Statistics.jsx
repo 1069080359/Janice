@@ -16,6 +16,7 @@ import {
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import zhCN from 'antd/es/locale/zh_CN';
+import raintools from 'raintools';
 import {
   formatBytes,
   trim,
@@ -88,6 +89,8 @@ class Statistics extends React.Component {
   }
 
   componentDidMount() {
+    console.log('raintools',raintools);
+    console.log('uuid',raintools.uuid());
     const tableNode = document.getElementsByTagName('table')[0]
     tableNode && tableNode.setAttribute('id', 'table-to-xls')
     chromeSpeak('Welcome to 欢欢老婆 exclusive table summary tool')
